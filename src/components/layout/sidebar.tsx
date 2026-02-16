@@ -22,14 +22,19 @@ const sidebarItems = [
     icon: PenTool,
   },
   {
+    title: "Current Affairs",
+    href: "/current-affairs",
+    icon: TrendingUp,
+  },
+  {
     title: "AI Assistant",
     href: "/ai-assistant",
     icon: Brain,
   },
   {
-    title: "Progress & Stats",
-    href: "/progress",
-    icon: TrendingUp,
+    title: "Resources",
+    href: "/resources",
+    icon: BookOpen,
   },
   {
     title: "Settings",

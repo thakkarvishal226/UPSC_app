@@ -4,6 +4,7 @@ import { ProgressCard } from "@/components/dashboard/progress-card";
 import { StreaksCard } from "@/components/dashboard/streaks-card";
 import { TodayFocusCard } from "@/components/dashboard/today-focus-card";
 import { RevisionsCard } from "@/components/dashboard/revisions-card";
+import { QuoteWidget } from "@/components/dashboard/quote-widget";
 
 export default function Dashboard() {
   return (
@@ -14,6 +15,9 @@ export default function Dashboard() {
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         <ProgressCard />
         <StreaksCard />
+        <div className="md:col-span-2">
+           <QuoteWidget />
+        </div>
       </div>
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
         <div className="col-span-4">
