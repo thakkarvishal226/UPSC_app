@@ -6,6 +6,8 @@ import { Sidebar } from "@/components/layout/sidebar";
 import { Header } from "@/components/layout/header";
 import { SyllabusProvider } from "@/context/syllabus-context";
 import { PomodoroTimer } from "@/components/pomodoro-timer";
+import { AuthProvider } from "@/context/auth-context";
+import { GamificationProvider } from "@/context/gamification-context";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -38,18 +40,22 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <SyllabusProvider>
-            <div className="flex h-screen overflow-hidden">
-              <Sidebar />
-              <div className="flex flex-1 flex-col overflow-hidden">
-                <Header />
-                <main className="flex-1 overflow-auto p-4 md:p-6 lg:p-8">
-                  {children}
-                </main>
-              </div>
-            </div>
-            <PomodoroTimer />
-          </SyllabusProvider>
+          <AuthProvider>
+            <GamificationProvider>
+              <SyllabusProvider>
+                <div className="flex h-screen overflow-hidden">
+                  <Sidebar />
+                  <div className="flex flex-1 flex-col overflow-hidden">
+                    <Header />
+                    <main className="flex-1 overflow-auto p-4 md:p-6 lg:p-8">
+                      {children}
+                    </main>
+                  </div>
+                </div>
+                <PomodoroTimer />
+              </SyllabusProvider>
+            </GamificationProvider>
+          </AuthProvider>
         </ThemeProvider>
       </body>
     </html>
