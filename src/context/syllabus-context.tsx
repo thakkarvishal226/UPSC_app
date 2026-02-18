@@ -2,6 +2,9 @@
 
 import React, { createContext, useContext, useState, useEffect } from "react";
 import { SyllabusTopic, INITIAL_SYLLABUS, TopicStatus } from "@/types/syllabus";
+import { doc, setDoc, onSnapshot } from "firebase/firestore";
+import { db } from "@/lib/firebase";
+import { useAuth } from "@/context/auth-context";
 
 interface SyllabusContextType {
   syllabus: SyllabusTopic[];
@@ -15,24 +18,33 @@ interface SyllabusContextType {
 const SyllabusContext = createContext<SyllabusContextType | undefined>(undefined);
 
 export function SyllabusProvider({ children }: { children: React.ReactNode }) {
+  const { user } = useAuth();
   const [syllabus, setSyllabus] = useState<SyllabusTopic[]>(INITIAL_SYLLABUS);
 
-  // Load from local storage on mount (simulating persistence)
   useEffect(() => {
-    const saved = localStorage.getItem("upsc-syllabus-data");
-    if (saved) {
-      try {
-        setSyllabus(JSON.parse(saved));
-      } catch (e) {
-        console.error("Failed to load syllabus data", e);
-      }
-    }
-  }, []);
+    if (!user) return;
 
-  // Save to local storage on change
-  useEffect(() => {
-    localStorage.setItem("upsc-syllabus-data", JSON.stringify(syllabus));
-  }, [syllabus]);
+    const userRef = doc(db, "users", user.uid);
+    const unsubscribe = onSnapshot(userRef, (docSnap) => {
+      if (docSnap.exists() && docSnap.data().syllabus) {
+        setSyllabus(docSnap.data().syllabus);
+      } else {
+        // Initialize if not exists
+        setDoc(userRef, { syllabus: INITIAL_SYLLABUS }, { merge: true });
+      }
+    });
+
+    return () => unsubscribe();
+  }, [user]);
+
+  const saveSyllabus = async (newSyllabus: SyllabusTopic[]) => {
+    if (!user) return;
+    try {
+       await setDoc(doc(db, "users", user.uid), { syllabus: newSyllabus }, { merge: true });
+    } catch (e) {
+        console.error("Error saving syllabus to Firestore", e);
+    }
+  };
 
   const updateStatus = (topicId: string, status: TopicStatus) => {
     const updateRecursive = (topics: SyllabusTopic[]): SyllabusTopic[] => {
@@ -74,7 +86,11 @@ export function SyllabusProvider({ children }: { children: React.ReactNode }) {
         return topic;
       });
     };
-    setSyllabus(updateRecursive(syllabus));
+    const newSyllabus = updateRecursive(syllabus);
+    // Optimistic update
+    setSyllabus(newSyllabus);
+    // Save to Firestore
+    saveSyllabus(newSyllabus);
   };
 
   const getTopicById = (id: string): SyllabusTopic | undefined => {
