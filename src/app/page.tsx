@@ -2,7 +2,7 @@
 
 import { StreaksCard } from "@/components/dashboard/streaks-card";
 import { TodayFocusCard } from "@/components/dashboard/today-focus-card";
-import { RevisionsCard } from "@/components/dashboard/revisions-card";
+import { RevisionPipeline } from "@/components/dashboard/revision-pipeline/revision-pipeline";
 import { QuoteWidget } from "@/components/dashboard/quote-widget";
 import { UserStats } from "@/components/dashboard/user-stats";
 import { ProgressRing } from "@/components/dashboard/widgets/progress-ring";
@@ -37,7 +37,7 @@ export default function Dashboard() {
            <TodayFocusCard />
         </div>
         <div className="col-span-3 space-y-6">
-           <RevisionsCard />
+           <RevisionPipeline />
         </div>
       </div>
     </div>
